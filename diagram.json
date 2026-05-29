@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "author": "Andres David Nazarith Gomez",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 39, "left": -106.2, "attrs": {} },
+    { "type": "wokwi-logic-analyzer", "id": "logic1", "top": -124.45, "left": 96, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 181.1, "left": 191.8, "attrs": {} }
+  ],
+  "connections": [
+    [ "logic1:D1", "uno:10", "red", [ "h0" ] ],
+    [ "logic1:D0", "uno:9", "blue", [ "h0" ] ],
+    [ "logic1:D2", "uno:1", "gray", [ "h-19.2", "v124.8", "h67.2" ] ],
+    [ "logic1:D3", "uno:0", "white", [ "h-9.6", "v105.6", "h57.6" ] ],
+    [ "logic1:D4", "uno:13", "cyan", [ "h-76.8" ] ],
+    [ "pot1:GND", "uno:GND.2", "black", [ "v19.2", "h-144" ] ],
+    [ "pot1:VCC", "uno:5V", "red", [ "v48", "h-192.8" ] ],
+    [ "pot1:SIG", "uno:A0", "green", [ "v28.8", "h-115.6", "v-57.6" ] ]
+  ],
+  "dependencies": {}
+}

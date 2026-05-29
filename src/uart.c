@@ -1,40 +1,48 @@
 
 #include "uart.h"
 
+SemaphoreHandle_t uart_mutex = NULL;
 
 void USART_Init(unsigned int ubrr)
 {
-/*Set baud rate */
-UBRR0H = (unsigned char)(ubrr>>8);
-UBRR0L = (unsigned char)ubrr;
-/*Enable receiver and transmitter */
-UCSR0B = (1<<RXEN0)|(1<<TXEN0);
-/* Set frame format: 8data, 1stop bit */
-UCSR0C = (3<<UCSZ00);
+    
+    UBRR0H = (unsigned char)(ubrr >> 8);
+    UBRR0L = (unsigned char)ubrr;
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+    UCSR0C = (3 << UCSZ00);
 }
 
 void USART_Transmit(unsigned char data)
 {
-/* Wait for empty transmit buffer */
-while (!(UCSR0A & (1<<UDRE0)));
-/* Put data into buffer, sends the data */
-UDR0 = data;
+    while (!(UCSR0A & (1 << UDRE0)));
+    UDR0 = data;
 }
 
 unsigned char USART_Receive(void)
 {
-/* Wait for data to be received */
-while (!(UCSR0A & (1<<RXC0)));
-/* Get and return received data from buffer */
-return UDR0;
+    while (!(UCSR0A & (1 << RXC0)));
+    return UDR0;
 }
 
-void imprimir(char *buffer){
+void imprimir(char *buffer)
+{
     int i = 0;
-    while(buffer[i] != '\0'){ /// imprima hasta el final del string
-        USART_Transmit(buffer[i]);
-        i ++;
+    // Si hay mutex, proteger la transmisión para evitar mezcla de bytes
+    if (uart_mutex != NULL) {
+        if (xSemaphoreTake(uart_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+            while (buffer[i] != '\0')
+            {
+                USART_Transmit(buffer[i]);
+                i++;
+            }
+            xSemaphoreGive(uart_mutex);
+        }
+    } else {
+        // Si no hay mutex, hacer transmisión sin protección
+        while (buffer[i] != '\0')
+        {
+            USART_Transmit(buffer[i]);
+            i++;
+        }
     }
-
 }
-

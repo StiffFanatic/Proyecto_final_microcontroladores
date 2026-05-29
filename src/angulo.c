@@ -2,5 +2,5 @@
 
 int obtener_angulo(int acd){
 
-    return (int)((0.225 * acd) + 119.25);
+    return (int)((0.3781 * acd) - 202.66);
 }
